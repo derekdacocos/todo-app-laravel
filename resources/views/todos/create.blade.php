@@ -14,7 +14,7 @@
                 <label>Description</label>
                 <textarea name="description" class="border px-2 py-1 w-full"></textarea>
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded">Save</button>
         </form>
     </div>
 </x-app-layout>
