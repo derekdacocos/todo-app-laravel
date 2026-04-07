@@ -4,7 +4,9 @@
     </x-slot>
 
     <div class="p-6">
-        <a href="{{ route('todos.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Add Todo</a>
+        <a href="{{ route('todos.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
+            Add Todo
+        </a>
 
         <table class="mt-4 border-collapse border border-gray-300 w-full">
             <thead>
