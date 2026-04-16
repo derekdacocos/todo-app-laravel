@@ -1,37 +1,86 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2>My Todos</h2>
+        <h2 class="text-xl font-bold text-center">Your To Do</h2>
     </x-slot>
 
-    <div class="p-6">
-        <a href="{{ route('todos.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-            Add Todo
-        </a>
+    <div class="min-h-screen bg-gray-100 flex justify-center pt-10">
+        <div class="w-full max-w-xl bg-white p-6 rounded-xl shadow">
 
-        <table class="mt-4 border-collapse border border-gray-300 w-full">
-            <thead>
-                <tr>
-                    <th class="border px-2 py-1">Title</th>
-                    <th class="border px-2 py-1">Description</th>
-                    <th class="border px-2 py-1">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+            <!-- Add Button -->
+            <div class="flex justify-center mb-6">
+                <a href="{{ route('todos.create') }}"
+                   class="bg-black text-white px-4 py-2 rounded-full text-xl hover:bg-gray-800">
+                    +
+                </a>
+            </div>
+
+            <!-- Todo List -->
+            <div class="space-y-3">
                 @foreach($todos as $todo)
-                <tr>
-                    <td class="border px-2 py-1">{{ $todo->title }}</td>
-                    <td class="border px-2 py-1">{{ $todo->description }}</td>
-                    <td class="border px-2 py-1">
-                        <a href="{{ route('todos.edit', $todo->id) }}" class="bg-yellow-400 px-2 py-1 rounded">Edit</a>
-                        <form action="{{ route('todos.destroy', $todo->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-1 rounded">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                <div class="flex items-center justify-between bg-gray-50 border rounded-lg px-4 py-3">
+
+                    <!-- Todo Content -->
+                    <div>
+                        <p class="font-semibold text-gray-800">{{ $todo->title }}</p>
+                        <p class="text-sm text-gray-500">{{ $todo->description }}</p>
+                    </div>
+
+                    <!-- 3 Dot Menu -->
+                    <div class="relative">
+                        <button onclick="toggleMenu({{ $todo->id }})"
+                                class="text-gray-500 text-xl px-2">
+                            ⋮
+                        </button>
+
+                        <div id="menu-{{ $todo->id }}"
+                             class="hidden absolute right-0 mt-2 w-32 bg-white border rounded shadow">
+
+                            <a href="{{ route('todos.edit', $todo->id) }}"
+                               class="block px-4 py-2 hover:bg-gray-100">
+                                Edit
+                            </a>
+
+                            <form action="{{ route('todos.destroy', $todo->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button class="w-full text-left px-4 py-2 hover:bg-red-100 text-red-600">
+                                    Delete
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
                 @endforeach
-            </tbody>
-        </table>
+            </div>
+
+        </div>
     </div>
+
+    <!-- Dropdown Script -->
+    <script>
+        function toggleMenu(id) {
+            const menu = document.getElementById('menu-' + id);
+
+            // Close all other menus first
+            document.querySelectorAll('[id^="menu-"]').forEach(el => {
+                if (el.id !== 'menu-' + id) {
+                    el.classList.add('hidden');
+                }
+            });
+
+            menu.classList.toggle('hidden');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('[id^="menu-"]').forEach(el => {
+                    el.classList.add('hidden');
+                });
+            }
+        });
+    </script>
+
 </x-app-layout>
