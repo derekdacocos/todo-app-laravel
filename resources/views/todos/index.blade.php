@@ -19,10 +19,29 @@
                 @foreach($todos as $todo)
                 <div class="flex items-center justify-between bg-gray-50 border rounded-lg px-4 py-3">
 
-                    <!-- Todo Content -->
-                    <div>
-                        <p class="font-semibold text-gray-800">{{ $todo->title }}</p>
-                        <p class="text-sm text-gray-500">{{ $todo->description }}</p>
+                    <!-- Left side: Checkbox + Text -->
+                    <div class="flex items-center space-x-3">
+
+                        <!-- Checkbox -->
+                        <form action="{{ route('todos.toggle', $todo->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <input type="checkbox"
+                                onchange="this.form.submit()"
+                                class="w-5 h-5"
+                                {{ $todo->is_completed ? 'checked' : '' }}>
+                        </form>
+                        
+                        <!-- Text -->
+                        <div>
+                            <p class="font-semibold {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-800' }}">
+                                {{ $todo->title }}
+                            </p>
+                            <p class="text-sm {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-500' }}">
+                                {{ $todo->description }}
+                            </p>
+                        </div>
+
                     </div>
 
                     <!-- 3 Dot Menu -->
@@ -33,10 +52,10 @@
                         </button>
 
                         <div id="menu-{{ $todo->id }}"
-                             class="hidden absolute right-0 mt-2 w-32 bg-white border rounded shadow">
+                            class="hidden absolute right-0 mt-2 w-32 bg-white border rounded shadow">
 
                             <a href="{{ route('todos.edit', $todo->id) }}"
-                               class="block px-4 py-2 hover:bg-gray-100">
+                            class="block px-4 py-2 hover:bg-gray-100">
                                 Edit
                             </a>
 
@@ -83,4 +102,4 @@
         });
     </script>
 
-</x-app-layout>
+</x-app-layout> 
