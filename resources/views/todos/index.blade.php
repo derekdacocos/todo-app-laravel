@@ -1,105 +1,70 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-bold text-center">Your To Do</h2>
-    </x-slot>
+    <div class="min-h-[calc(100vh-64px)] bg-gray-100 py-10 px-4 flex justify-center">
+        
+        <div class="w-full flex justify-center">
+            
+            <!-- Card -->
+            <div class="w-full max-w-xs bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
 
-    <div class="min-h-screen bg-gray-100 flex justify-center pt-10">
-        <div class="w-full max-w-xl bg-white p-6 rounded-xl shadow">
+                <!-- Title -->
+                <h2 class="text-lg font-semibold text-center mb-5">Your To Do</h2>
 
-            <!-- Add Button -->
-            <div class="flex justify-center mb-6">
-                <a href="{{ route('todos.create') }}"
-                   class="bg-black text-white px-4 py-2 rounded-full text-xl hover:bg-gray-800">
-                    +
-                </a>
-            </div>
+                <!-- Input Bar -->
+                <form action="{{ route('todos.store') }}" method="POST" class="flex items-center gap-2 mb-5">
+                    @csrf
+                    <input type="text" name="title" placeholder="Add new task"
+                           class="flex-1 border-b border-gray-400 focus:outline-none focus:border-black text-sm pb-1">
 
-            <!-- Todo List -->
-            <div class="space-y-3">
-                @foreach($todos as $todo)
-                <div class="flex items-center justify-between bg-gray-50 border rounded-lg px-4 py-3">
+                    <button type="submit"
+                            class="bg-gray-800 text-white w-8 h-8 flex items-center justify-center rounded-md hover:bg-black transition">
+                        +
+                    </button>
+                </form>
 
-                    <!-- Left side: Checkbox + Text -->
-                    <div class="flex items-center space-x-3">
+                <!-- Todo List -->
+                <div class="space-y-2">
+                    @foreach($todos as $todo)
+                    <div class="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg">
 
-                        <!-- Checkbox -->
-                        <form action="{{ route('todos.toggle', $todo->id) }}" method="POST">
-                            @csrf
-                            @method('PATCH')
-                            <input type="checkbox"
-                                onchange="this.form.submit()"
-                                class="w-5 h-5"
-                                {{ $todo->is_completed ? 'checked' : '' }}>
-                        </form>
-                        
-                        <!-- Text -->
-                        <div>
-                            <p class="font-semibold {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-800' }}">
-                                {{ $todo->title }}
-                            </p>
-                            <p class="text-sm {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-500' }}">
-                                {{ $todo->description }}
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <!-- 3 Dot Menu -->
-                    <div class="relative">
-                        <button onclick="toggleMenu({{ $todo->id }})"
-                                class="text-gray-500 text-xl px-2">
-                            ⋮
-                        </button>
-
-                        <div id="menu-{{ $todo->id }}"
-                            class="hidden absolute right-0 mt-2 w-32 bg-white border rounded shadow">
-
-                            <a href="{{ route('todos.edit', $todo->id) }}"
-                            class="block px-4 py-2 hover:bg-gray-100">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('todos.destroy', $todo->id) }}" method="POST">
+                        <div class="flex items-center gap-2">
+                            <!-- Checkbox -->
+                            <form action="{{ route('todos.toggle', $todo->id) }}" method="POST">
                                 @csrf
-                                @method('DELETE')
-                                <button class="w-full text-left px-4 py-2 hover:bg-red-100 text-red-600">
-                                    Delete
-                                </button>
+                                @method('PATCH')
+                                <input type="checkbox"
+                                       onchange="this.form.submit()"
+                                       class="w-4 h-4 cursor-pointer"
+                                       {{ $todo->is_completed ? 'checked' : '' }}>
                             </form>
 
+                            <!-- Text -->
+                            <span class="text-sm {{ $todo->is_completed ? 'line-through text-gray-400' : '' }}">
+                                {{ $todo->title }}
+                            </span>
                         </div>
-                    </div>
 
+                        <!-- Delete -->
+                        <form action="{{ route('todos.destroy', $todo->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button class="text-gray-400 hover:text-red-500 text-sm transition">
+                                ✕
+                            </button>
+                        </form>
+
+                    </div>
+                    @endforeach
                 </div>
-                @endforeach
+
+                <!-- Task Counter -->
+                <div class="mt-5 text-sm text-gray-500 text-center">
+                    Your remaining todos: 
+                    {{ $todos->where('is_completed', false)->count() }}
+                </div>
+
             </div>
 
         </div>
+
     </div>
-
-    <!-- Dropdown Script -->
-    <script>
-        function toggleMenu(id) {
-            const menu = document.getElementById('menu-' + id);
-
-            // Close all other menus first
-            document.querySelectorAll('[id^="menu-"]').forEach(el => {
-                if (el.id !== 'menu-' + id) {
-                    el.classList.add('hidden');
-                }
-            });
-
-            menu.classList.toggle('hidden');
-        }
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function (e) {
-            if (!e.target.closest('.relative')) {
-                document.querySelectorAll('[id^="menu-"]').forEach(el => {
-                    el.classList.add('hidden');
-                });
-            }
-        });
-    </script>
-
-</x-app-layout> 
+</x-app-layout>
